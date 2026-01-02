@@ -1,0 +1,13 @@
+{
+  "name": "etebarboti-monorepo",
+  "private": true,
+  "scripts": {
+    "dev:public": "npm run dev -w @etebarboti/public",
+    "dev:admin": "npm run dev -w @etebarboti/admin",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}

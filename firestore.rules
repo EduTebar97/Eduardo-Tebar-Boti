@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Write only by Admin via Functions or if we allow users to update their own profile
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Public Posts - READ ONLY for public, WRITE only by Cloud Functions (Publish)
+    match /posts_public/{postId} {
+      allow read: if true;
+      allow write: if false; // Only manageable via Admin SDK actions
+    }
+
+    // Draft Posts - ADMIN ONLY
+    match /posts_draft/{postId} {
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Helper function (if we were to use it inline, but claims are better)
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}

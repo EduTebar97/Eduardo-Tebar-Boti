@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "etebarboti-web",
+    "dev": "etebarboti-web-dev",
+    "prod": "etebarboti-web-prod"
+  }
+}
