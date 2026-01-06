@@ -1,41 +1,255 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-// import { collection, addDoc } from "firebase/firestore";
-// import { db } from "../lib/firebase";
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { savePost, uploadImage, Post } from '../lib/services'
 
-export default function Editor() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+export const Editor = () => {
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('') // In a real app, this would be a refined WYSIWYG state
+  const [status, setStatus] = useState<Post['status']>('draft')
+  const [category, setCategory] = useState('Estadística')
+  const [slug, setSlug] = useState('')
+  const [excerpt, setExcerpt] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
 
-  const handleSaveDraft = async () => {
-    alert("Función de guardar borrador pendiente de implementar con firebase.");
-    // await addDoc(collection(db, "posts_draft"), { title, content, ... });
-  };
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      try {
+        setLoading(true)
+        const url = await uploadImage(e.target.files[0])
+        setImageUrl(url)
+      } catch (error) {
+        console.error('Error uploading image:', error)
+        alert('Error al subir imagen')
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+
+  const handleSave = async () => {
+    try {
+      setLoading(true)
+      await savePost({
+        title,
+        slug: slug || title.toLowerCase().replace(/ /g, '-'),
+        content,
+        excerpt,
+        status,
+        category,
+        imageUrl
+      })
+      alert('Post guardado correctamente')
+      navigate('/posts')
+    } catch (error) {
+      console.error('Error saving post:', error)
+      alert('Error al guardar el post')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white shadow p-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold text-gray-700 hover:text-black">&larr; Volver</Link>
-        <div className="space-x-4">
-          <button className="text-gray-600 hover:text-black">Guardar Borrador</button>
-          <button onClick={handleSaveDraft} className="bg-blue-600 text-white px-4 py-2 rounded">Publicar</button>
+    <div className="flex h-screen flex-col overflow-hidden bg-gray-100 font-sans text-gray-900">
+      {/* HEADER DEL EDITOR */}
+      <header className="z-20 flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-6">
+        <div className="flex items-center gap-4">
+          <Link
+            to="/posts"
+            className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-900"
+          >
+            <span className="material-symbols-outlined">arrow_back</span> Volver
+          </Link>
+          <div className="h-6 w-px bg-gray-200"></div>
+          <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            {loading ? 'Guardando...' : 'Editando Post'}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50">
+            Vista Previa
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="bg-primary flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white shadow-lg shadow-blue-500/30 transition-colors hover:bg-blue-700 disabled:opacity-50"
+          >
+            <span>{status === 'published' ? 'Publicar' : 'Guardar'}</span>
+            <span className="material-symbols-outlined text-sm">
+              rocket_launch
+            </span>
+          </button>
         </div>
       </header>
-      <main className="flex-1 p-8 container mx-auto max-w-4xl">
-        <input
-          type="text"
-          placeholder="Título de la publicación"
-          className="w-full text-4xl font-bold border-none outline-none bg-transparent mb-8 placeholder-gray-400"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <textarea
-          placeholder="Escribe tu contenido aquí..."
-          className="w-full h-96 p-4 text-lg border-none outline-none resize-none bg-white rounded shadow-sm"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-      </main>
+
+      {/* ÁREA DE TRABAJO */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* 1. COLUMNA PRINCIPAL (Contenido) */}
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-8">
+          <div className="mx-auto max-w-4xl space-y-6">
+            {/* Título */}
+            <input
+              type="text"
+              placeholder="Escribe un título impactante aquí..."
+              className="w-full border-none bg-transparent px-0 text-4xl font-bold text-gray-900 placeholder:text-gray-300 focus:ring-0"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            {/* Editor WYSIWYG Container */}
+            <div className="flex min-h-[600px] flex-col rounded-xl border border-gray-200 bg-white shadow-sm">
+              <div className="sticky top-0 z-10 flex items-center gap-1 rounded-t-xl border-b border-gray-100 bg-white p-2">
+                {/* Toolbar items... (keeping visual only for now) */}
+                <button
+                  className="rounded p-2 text-gray-600 hover:bg-gray-100"
+                  title="Negrita"
+                >
+                  <span className="material-symbols-outlined">format_bold</span>
+                </button>
+                {/* ... other buttons ... */}
+              </div>
+
+              {/* Content Body (Editable) */}
+              <textarea
+                className="flex-1 resize-none border-none p-8 focus:ring-0"
+                placeholder="Empieza a escribir tu contenido..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              ></textarea>
+            </div>
+          </div>
+        </main>
+
+        {/* 2. COLUMNA LATERAL (Configuración) */}
+        <aside className="z-10 w-80 shrink-0 overflow-y-auto border-l border-gray-200 bg-white">
+          <div className="space-y-8 p-6">
+            {/* Panel: Publicación */}
+            <div>
+              <h3 className="mb-4 border-b pb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                Publicación
+              </h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Estado
+                  </label>
+                  <select
+                    className="focus:border-primary focus:ring-primary w-full rounded-lg border-gray-300 text-sm"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as any)}
+                  >
+                    <option value="draft">Borrador</option>
+                    <option value="published">Publicado</option>
+                    <option value="scheduled">Programado</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Panel: Categorías */}
+            <div>
+              <h3 className="mb-4 border-b pb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                Categoría
+              </h3>
+              <div className="space-y-2">
+                {[
+                  'Estadística',
+                  'Gestión de Equipos',
+                  'Hábitos Saludables',
+                  'Neurociencia'
+                ].map((cat) => (
+                  <label
+                    key={cat}
+                    className="flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-50"
+                  >
+                    <input
+                      type="radio"
+                      name="cat"
+                      className="text-primary focus:ring-primary border-gray-300"
+                      checked={category === cat}
+                      onChange={() => setCategory(cat)}
+                    />
+                    <span className="text-sm font-medium text-gray-700">
+                      {cat}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Panel: Imagen */}
+            <div>
+              <h3 className="mb-4 border-b pb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                Imagen Principal
+              </h3>
+              <div
+                className="hover:border-primary group relative flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 transition-colors hover:bg-blue-50"
+                onClick={() => document.getElementById('file-upload')?.click()}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt="Preview"
+                    className="absolute inset-0 size-full rounded-lg object-cover"
+                  />
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined group-hover:text-primary mb-1 text-gray-400">
+                      add_photo_alternate
+                    </span>
+                    <span className="group-hover:text-primary text-xs font-medium text-gray-500">
+                      Subir Imagen
+                    </span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            </div>
+
+            {/* Panel: SEO */}
+            <div>
+              <h3 className="mb-4 border-b pb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                SEO Optimization
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    URL Slug
+                  </label>
+                  <input
+                    type="text"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    placeholder="interpretacion-cox-supervivencia"
+                    className="w-full rounded-lg border-gray-300 bg-gray-50 font-mono text-sm text-gray-600"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Meta Description (Excerpt)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                    className="focus:border-primary focus:ring-primary w-full rounded-lg border-gray-300 text-sm"
+                    placeholder="Breve resumen para Google..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
-  );
+  )
 }

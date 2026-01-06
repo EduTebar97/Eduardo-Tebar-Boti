@@ -1,27 +1,39 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "../lib/firebase";
-import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
-import Editor from "../pages/Editor";
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { onAuthStateChanged, User } from 'firebase/auth'
+import { auth } from '../lib/firebase'
+import Login from '../pages/Login'
+import { Dashboard } from '../pages/Dashboard'
+import { Editor } from '../pages/Editor'
+import { PostsList } from '../pages/PostsList'
+import { Categories } from '../pages/Categories'
+import { MediaLibrary } from '../pages/MediaLibrary'
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      setLoading(false)
+    })
+    return () => unsubscribe()
+  }, [])
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Cargando...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Cargando...
+      </div>
+    )
+  }
 
-  return children;
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
 }
 
 function App() {
@@ -38,6 +50,30 @@ function App() {
           }
         />
         <Route
+          path="/posts"
+          element={
+            <ProtectedRoute>
+              <PostsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <ProtectedRoute>
+              <Categories />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/media"
+          element={
+            <ProtectedRoute>
+              <MediaLibrary />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/editor"
           element={
             <ProtectedRoute>
@@ -47,7 +83,7 @@ function App() {
         />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

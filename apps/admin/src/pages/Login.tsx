@@ -21,34 +21,65 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleLogin} className="p-8 bg-white rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
-        {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4 font-sans text-gray-900">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+        <div className="mb-8 flex flex-col items-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <span className="material-symbols-outlined text-3xl">
+              admin_panel_settings
+            </span>
+          </div>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight text-gray-900">
+            Admin Login
+          </h1>
+          <p className="mt-2 text-sm text-gray-500">
+            Acceso restringido a personal autorizado
+          </p>
         </div>
-        <div className="mb-6">
-          <label className="block mb-1 text-sm font-medium">Contraseña</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          {error && (
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+          <div>
+            <label className="mb-1 block text-sm font-bold text-gray-700">
+              Correo Electrónico
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border-gray-300 p-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="admin@ejemplo.com"
+              required
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-bold text-gray-700">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border-gray-300 p-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-primary py-2.5 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-700 active:scale-95"
+          >
+            Iniciar Sesión
+          </button>
+        </form>
+        <div className="mt-6 text-center text-xs text-gray-400">
+          &copy; 2024 Dr. Tebar Boti. Todos los derechos reservados.
         </div>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Entrar
-        </button>
-      </form>
+      </div>
     </div>
   );
 }
