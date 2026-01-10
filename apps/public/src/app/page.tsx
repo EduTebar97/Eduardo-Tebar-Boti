@@ -39,7 +39,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-2xl transform translate-x-3 translate-y-3 -z-10"></div>
             <div
               className="relative w-full aspect-[4/3] bg-slate-200 rounded-2xl overflow-hidden shadow-2xl"
-              style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80")', backgroundSize: 'cover', backgroundPosition: 'center' }}
+              style={{ backgroundImage: 'url("/Fotomarca.png")', backgroundSize: 'cover', backgroundPosition: 'center 22%' }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 

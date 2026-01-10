@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { StatsCard } from '../components/StatsCard';
 import { PostsTable } from '../components/PostsTable';
-import { EditorModal } from '../components/EditorModal';
+// EditorModal removed
 
 export const Dashboard = () => {
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
-    <Layout onNewPost={() => setIsEditorOpen(true)}>
-      {isEditorOpen && <EditorModal onClose={() => setIsEditorOpen(false)} />}
+    <Layout onNewPost={() => navigate('/editor')}>
+
 
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatsCard

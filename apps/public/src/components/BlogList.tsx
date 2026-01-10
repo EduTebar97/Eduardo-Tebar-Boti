@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MOCK_POSTS, CATEGORIES } from "@/lib/posts";
+import { BlogPost, CATEGORIES } from "@/lib/posts";
 
-export default function BlogList() {
+interface BlogListProps {
+    initialPosts: BlogPost[];
+}
+
+export default function BlogList({ initialPosts }: BlogListProps) {
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
 
     // Filter logic
-    const filteredPosts = MOCK_POSTS.filter(post => {
+    const filteredPosts = initialPosts.filter(post => {
         const matchesCategory = filterCategory ? post.category === filterCategory : true;
         const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                               post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -45,12 +49,12 @@ export default function BlogList() {
                                 className={`w-full text-left px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex justify-between items-center ${!filterCategory ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50'}`}
                             >
                                 <span>Todos los posts</span>
-                                <span className={`${!filterCategory ? 'bg-white/20' : 'bg-gray-100'} px-2 py-0.5 rounded text-xs`}>{MOCK_POSTS.length}</span>
+                                <span className={`${!filterCategory ? 'bg-white/20' : 'bg-gray-100'} px-2 py-0.5 rounded text-xs`}>{initialPosts.length}</span>
                             </button>
                             {CATEGORIES.map(cat => (
                                 <button
                                     key={cat.name}
-                                    onClick={() => setFilterCategory(cat.name as any)}
+                                    onClick={() => setFilterCategory(cat.name)}
                                     className={`w-full text-left px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center gap-3 group ${filterCategory === cat.name ? 'bg-gray-100 dark:bg-gray-700 text-primary' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50'}`}
                                 >
                                     <span className={`material-symbols-outlined text-lg ${cat.color}`}>{cat.icon}</span>

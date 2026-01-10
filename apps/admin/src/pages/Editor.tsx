@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { savePost, uploadImage, Post } from '../lib/services'
+import RichTextEditor from '../components/RichTextEditor'
 
 export const Editor = () => {
   const navigate = useNavigate()
@@ -11,14 +12,16 @@ export const Editor = () => {
   const [category, setCategory] = useState('Estadística')
   const [slug, setSlug] = useState('')
   const [excerpt, setExcerpt] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
+  const [coverImage, setCoverImage] = useState('')
+  const [tags, setTags] = useState('') // Comma separated string for editing
+  const [author, setAuthor] = useState('Dr. Profile')
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       try {
         setLoading(true)
         const url = await uploadImage(e.target.files[0])
-        setImageUrl(url)
+        setCoverImage(url)
       } catch (error) {
         console.error('Error uploading image:', error)
         alert('Error al subir imagen')
@@ -38,7 +41,12 @@ export const Editor = () => {
         excerpt,
         status,
         category,
-        imageUrl
+        coverImage,
+        author,
+        tags: tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
       })
       alert('Post guardado correctamente')
       navigate('/posts')
@@ -99,26 +107,8 @@ export const Editor = () => {
             />
 
             {/* Editor WYSIWYG Container */}
-            <div className="flex min-h-[600px] flex-col rounded-xl border border-gray-200 bg-white shadow-sm">
-              <div className="sticky top-0 z-10 flex items-center gap-1 rounded-t-xl border-b border-gray-100 bg-white p-2">
-                {/* Toolbar items... (keeping visual only for now) */}
-                <button
-                  className="rounded p-2 text-gray-600 hover:bg-gray-100"
-                  title="Negrita"
-                >
-                  <span className="material-symbols-outlined">format_bold</span>
-                </button>
-                {/* ... other buttons ... */}
-              </div>
-
-              {/* Content Body (Editable) */}
-              <textarea
-                className="flex-1 resize-none border-none p-8 focus:ring-0"
-                placeholder="Empieza a escribir tu contenido..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              ></textarea>
-            </div>
+            {/* Editor WYSIWYG Container */}
+            <RichTextEditor content={content} onChange={setContent} />
           </div>
         </main>
 
@@ -187,11 +177,13 @@ export const Editor = () => {
               </h3>
               <div
                 className="hover:border-primary group relative flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 transition-colors hover:bg-blue-50"
-                onClick={() => document.getElementById('file-upload')?.click()}
+                onClick={() =>
+                  document.getElementById('hidden-file-input')?.click()
+                }
               >
-                {imageUrl ? (
+                {coverImage ? (
                   <img
-                    src={imageUrl}
+                    src={coverImage}
                     alt="Preview"
                     className="absolute inset-0 size-full rounded-lg object-cover"
                   />
@@ -205,13 +197,46 @@ export const Editor = () => {
                     </span>
                   </>
                 )}
+                {/* ID must be unique and match the click handler above */}
                 <input
                   type="file"
-                  id="file-upload"
+                  id="hidden-file-input"
                   className="hidden"
                   accept="image/*"
                   onChange={handleImageUpload}
                 />
+              </div>
+            </div>
+
+            {/* Panel: Tags & Meta */}
+            <div>
+              <h3 className="mb-4 border-b pb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                Metadatos
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Autor
+                  </label>
+                  <input
+                    type="text"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    className="w-full rounded-lg border-gray-300 bg-gray-50 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Tags (separados por coma)
+                  </label>
+                  <input
+                    type="text"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    placeholder="Investigación, RStudio, ..."
+                    className="w-full rounded-lg border-gray-300 bg-gray-50 text-sm"
+                  />
+                </div>
               </div>
             </div>
 

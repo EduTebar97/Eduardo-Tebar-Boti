@@ -6,7 +6,7 @@ export default function Footer() {
                 <div>
                     <div className="flex items-center gap-2 mb-4">
                         <span className="material-symbols-outlined text-3xl text-primary">cardiology</span>
-                        <h4 className="text-xl font-bold">Dr. Profile</h4>
+                        <h4 className="text-xl font-bold">Dr. Eduardo Tébar</h4>
                     </div>
                     <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
                         Ciencia de datos rigurosa y gestión humana para la práctica clínica real.
@@ -37,7 +37,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="text-center text-xs text-gray-600">
-                    © 2026 Dr. Profile. Todos los derechos reservados.
+                    © 2026 Dr. Eduardo Tébar. Todos los derechos reservados.
                 </div>
             </div>
         </div>

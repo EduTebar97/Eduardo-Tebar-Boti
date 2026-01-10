@@ -1,11 +1,14 @@
 import BlogList from "@/components/BlogList";
 
 export const metadata = {
-  title: "Blog & Insights | Dr. Profile",
+  title: "Blog & Insights | Dr. Eduardo Tébar",
   description: "Artículos sobre bioestadística, liderazgo clínico y los avances médicos.",
 };
 
-export default function BlogFeedPage() {
+import { getAllPosts } from "@/lib/posts";
+
+export default async function BlogFeedPage() {
+  const posts = await getAllPosts();
   return (
     <div className="bg-background-light dark:bg-background-dark min-h-screen">
       {/* Hero Header */}
@@ -25,7 +28,7 @@ export default function BlogFeedPage() {
       </section>
 
       {/* Interactive List */}
-      <BlogList />
+      <BlogList initialPosts={posts} />
     </div>
   );
 }

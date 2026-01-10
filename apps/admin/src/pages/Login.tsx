@@ -1,30 +1,30 @@
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import { auth } from "../lib/firebase";
+import { useState } from 'react'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
+import { auth } from '../lib/firebase'
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      await signInWithEmailAndPassword(auth, email, password)
+      navigate('/')
     } catch (err: any) {
-      setError("Error al iniciar sesión. Verifica tus credenciales.");
-      console.error(err);
+      setError('Error al iniciar sesión. Verifica tus credenciales.')
+      console.error(err)
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4 font-sans text-gray-900">
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
         <div className="mb-8 flex flex-col items-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <div className="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-xl">
             <span className="material-symbols-outlined text-3xl">
               admin_panel_settings
             </span>
@@ -51,7 +51,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border-gray-300 p-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-lg border-gray-300 p-2.5 text-sm outline-none focus:ring-1"
               placeholder="admin@ejemplo.com"
               required
             />
@@ -64,14 +64,14 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border-gray-300 p-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-lg border-gray-300 p-2.5 text-sm outline-none focus:ring-1"
               placeholder="••••••••"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full rounded-lg bg-primary py-2.5 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-700 active:scale-95"
+            className="bg-primary w-full rounded-lg py-2.5 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-700 active:scale-95"
           >
             Iniciar Sesión
           </button>
@@ -81,5 +81,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }

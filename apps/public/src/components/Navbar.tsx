@@ -5,13 +5,13 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 flex items-center bg-white/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-4 h-16 transition-all">
       <div className="flex items-center gap-2 cursor-pointer">
         <span className="material-symbols-outlined text-primary text-3xl">cardiology</span>
-        <span className="font-bold text-lg tracking-tight hidden sm:block">Dr. Profile</span>
+        <span className="font-bold text-lg tracking-tight hidden sm:block">Dr. Eduardo Tébar</span>
       </div>
       <div className="flex-1"></div>
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex space-x-6 mr-4 text-sm font-medium text-gray-600">
            <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
-           <Link href="/services/research-analysis" className="hover:text-primary transition-colors">Servicios</Link>
+           <Link href="/servicios" className="hover:text-primary transition-colors">Servicios</Link>
            <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
         </div>
 
